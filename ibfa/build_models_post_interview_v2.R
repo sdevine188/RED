@@ -21,6 +21,7 @@ library(ROSE)
 library(DMwR)
 library(janitor)
 library(randomForest)
+library(tibble)
 
 options(scipen=999)
 
@@ -126,6 +127,19 @@ treatment_post_interview_full %>% select(!!outcome_variable_sym) %>% str()
 
 
 ########################################################
+
+
+# save train/test receipt numbers 
+treatment_post_interview_train_receipt_numbers <- treatment_post_interview_train %>% select(receipt_number)
+treatment_post_interview_train_receipt_numbers
+write_csv(treatment_post_interview_train_receipt_numbers, "output/post_interview/train/treatment_post_interview_train_receipt_numbers_20180508.csv")
+
+treatment_post_interview_test_receipt_numbers <- treatment_post_interview_test %>% select(receipt_number)
+treatment_post_interview_test_receipt_numbers
+write_csv(treatment_post_interview_test_receipt_numbers, "output/post_interview/test/treatment_post_interview_test_receipt_numbers_20180508.csv")
+
+
+##########################################################
 
 
 # detach receipt_number from training, test, and full data; save receipt numbers for full data for linking predictions at the end
@@ -369,7 +383,7 @@ train_data <- treatment_post_interview_train_smote
 train_control <- trainControl(method = "repeatedcv", number = 10, repeats = 3)
 
 # mtry <- sqrt(ncol(train_data))
-tuneRF_x <- select(train_data, -c(Case_OutcomeDenied, Case_OutcomeApproved, Case_OutcomePending, SOF_Finding_SPFF, SOF_Finding_SPFNF, SOF_Finding_SPInconclusive,
+tuneRF_x <- select(train_data, -c(Case_OutcomeDenied, Case_OutcomeApproved, SOF_Finding_SPFF, SOF_Finding_SPFNF, SOF_Finding_SPInconclusive,
                                  SOF_Finding_SPPending, Suf_EvidenceNA_value, Suf_EvidenceNo, Suf_EvidenceYes))
 dim(tuneRF_x)
 tuneRF_y <- pull(train_data, !!outcome_variable_sym)
@@ -529,7 +543,7 @@ current_wd <- getwd()
 setwd("H:/R/rpart")
 
 source("get_surrogate_output.R")
-surrogate_output <- get_surrogate_output(treatment_pre_interview_train_rpart_caret$finalModel)
+surrogate_output <- get_surrogate_output(treatment_post_interview_train_rpart_caret$finalModel)
 surrogate_output
 
 setwd(current_wd)
@@ -543,6 +557,7 @@ write_csv(x = surrogate_output, path = surrogate_file_name)
 model_file_name <- str_c("output/post_interview/train/treatment_post_interview_train_rpart_caret_model_", outcome_variable, ".rds")
 model_file_name
 saveRDS(object = treatment_post_interview_train_rpart_caret$finalModel, file = model_file_name)
+model <- readRDS(file = "output/post_interview/train/treatment_post_interview_train_rpart_caret_model_Case_OutcomeDenied.rds")
 
 
 ############################################################

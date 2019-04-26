@@ -121,6 +121,19 @@ treatment_pre_interview_full %>% select(!!outcome_variable_sym) %>% str()
 ########################################################
 
 
+# save train/test receipt numbers 
+treatment_pre_interview_train_receipt_numbers <- treatment_pre_interview_train %>% select(receipt_number)
+treatment_pre_interview_train_receipt_numbers
+write_csv(treatment_pre_interview_train_receipt_numbers, "output/pre_interview/train/treatment_pre_interview_train_receipt_numbers_20180508.csv")
+
+treatment_pre_interview_test_receipt_numbers <- treatment_pre_interview_test %>% select(receipt_number)
+treatment_pre_interview_test_receipt_numbers
+write_csv(treatment_pre_interview_test_receipt_numbers, "output/pre_interview/test/treatment_pre_interview_test_receipt_numbers_20180508.csv")
+
+
+########################################################
+
+
 # detach receipt_number from training, test, and full data; save receipt numbers for full data for linking predictions at the end
 treatment_pre_interview_train <- treatment_pre_interview_train %>% select(-receipt_number)
 treatment_pre_interview_test <- treatment_pre_interview_test %>% select(-receipt_number)
@@ -454,6 +467,11 @@ write_csv(x = surrogate_output, path = surrogate_file_name)
 model_file_name <- str_c("output/pre_interview/train/treatment_pre_interview_train_rpart_caret_model_", outcome_variable, ".rds")
 model_file_name
 saveRDS(object = treatment_pre_interview_train_rpart_caret$finalModel, file = model_file_name)
+
+# load model
+# model <- readRDS(file = "output/pre_interview/train/treatment_pre_interview_train_rpart_caret_model_Case_OutcomeDenied.rds")
+# treatment_pre_interview_train_rpart_caret_output <- model$frame
+# treatment_pre_interview_train_rpart_caret_output_part2 <- treatment_pre_interview_train_rpart_caret_output$yval2
 
 
 ############################################################

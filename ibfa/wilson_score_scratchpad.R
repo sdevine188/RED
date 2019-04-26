@@ -1,5 +1,5 @@
 # https://www.lexjansen.com/wuss/2016/127_Final_Paper_PDF.pdf
-# wilson score is equation #10 in paper
+# wilson score is equation #10
 
 n1 <- 1000
 x1 <- 50
